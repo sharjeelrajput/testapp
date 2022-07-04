@@ -1,5 +1,6 @@
  const express = require("express");
  const dotenv = require('dotenv');
+ const routes = require('./routes/main-routes');
 
  dotenv.config();
  
@@ -12,8 +13,10 @@
         res.json({type : 'success', message : ' server is running'})
     })
     app.listen(port, () => {
-        console.log(' server Started ... ', process.env);
+        console.log(' server Started ... ');
     });
+
+    app.use(routes);
  }
 
  module.exports = runServer();
