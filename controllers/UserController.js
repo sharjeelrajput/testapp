@@ -3,9 +3,11 @@ const express = require('express');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 const UserDb = require('./../db/user.db');
+const { UserModel } = require('./../db/user.db');
 const { JsonWebTokenError } = require('jsonwebtoken');
 
-const login = asyncHandler( async(req, res) => {   
+const login = asyncHandler( async(req, res) => {
+
     res.json({type : ' success', message : 'login called.'});
 });
 
@@ -17,7 +19,7 @@ const getMe = asyncHandler( async(req, res) => {
     if(!username){
         res.json({ type : 'error', message : 'invalid data'})
     }
-    const userMsg = UserDb.getUserData(req.body.username, req, res);
+    const userMsg = UserDb.getUserData(req.body.username, req, res);        
     res.json({type : ' success', message : userMsg});
 })
 
@@ -43,10 +45,26 @@ const register = asyncHandler( async(req, res) => {
         first_name : firstName,
         last_name : lastName,
         email : email,
-        toekn  : generateToken(username)
+        token  : generateToken(username)
     }
-    const userMsg = UserDb.saveUser(userData, req, res);
-    res.json({type : ' success', message : userMsg});
+
+    const userSave = new UserModel({
+        id: new Date().getMilliseconds+"",
+        username : username,
+        password : pwdHashed,
+        firstName : firstName,
+        lastName : lastName,
+        email : email,
+        token  : generateToken(username)
+    });
+
+    userSave.save().then((result) => {
+        const userMsg = UserDb.saveUser(userData, req, res);
+        res.json({type : ' success', message : userMsg});
+    }).catch(err => {
+        console.log(err);
+        res.json({type : ' error', message : err});
+    });    
 })
 
 

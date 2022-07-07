@@ -2,10 +2,12 @@
  const dotenv = require('dotenv');
  const routes = require('./routes/main-routes');
  const protected  = require('./middleware/basicAuth')
+ const mongoose = require('./config/moongo');
  dotenv.config();
  
  const app = new express();
  const port = process.env.PORT || 3000;
+ console.log(' ------------------ ', process.env.mongodb);
  app.use(express.json());
  app.use(express.urlencoded({ extended: false }));
 
